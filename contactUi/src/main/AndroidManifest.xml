@@ -9,6 +9,7 @@
         <activity
             android:name=".ui.ContactsListActivity"
             android:exported="true"
+            android:theme="@style/ThemeAppCompat"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
     </application>
