@@ -5,6 +5,8 @@ import android.content.res.Resources
 import android.os.Bundle
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.intent.Intents
+import androidx.test.espresso.intent.Intents.intended
+import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
 import androidx.test.platform.app.InstrumentationRegistry
 import com.android.vengateshm.contactui.model.ContactsListUiModel
 import com.android.vengateshm.contactui.providers.ContactsUiProvider

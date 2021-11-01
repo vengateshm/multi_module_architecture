@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.vengateshm.contactui.R
 import com.android.vengateshm.contactui.adapters.ContactsListAdapter
+import com.android.vengateshm.contactui.model.ContactItem
 import com.android.vengateshm.contactui.viewmodel.ContactsListViewModel
 
 // TODO: Rename parameter arguments, choose names that match
@@ -58,10 +59,15 @@ class ContactsListFragment : Fragment() {
 
         viewModel = ViewModelProvider(requireActivity()).get(ContactsListViewModel::class.java)
         viewModel.contactsList.observe(viewLifecycleOwner, {
-            contactsListAdapter.contactItemList = it
-            contactsListAdapter.notifyDataSetChanged()
+            populateContactsList(it)
+
         })
         viewModel.getContactsList()
+    }
+
+    fun populateContactsList(data: List<ContactItem>?) {
+        contactsListAdapter.contactItemList = data!!
+        contactsListAdapter.notifyDataSetChanged()
     }
 
     companion object {
