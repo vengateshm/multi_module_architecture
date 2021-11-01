@@ -9,7 +9,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:text="Customer Service Hotline" />
+        android:text="Customer Service Hotline" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_toEndOf="@+id/ivContactAvatar"
-            tools:text="Hotline Number" />
+            android:text="Hotline Number" />
 
         <TextView
             android:id="@+id/tvNumber"
@@ -38,6 +38,6 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="4dp"
             android:layout_toEndOf="@+id/ivContactAvatar"
-            tools:text="1800 667700" />
+            android:text="1800 667700" />
     </RelativeLayout>
 </LinearLayout>

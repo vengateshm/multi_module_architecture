@@ -5,9 +5,9 @@ import com.android.vengateshm.contactui.constants.LIST_HEADER
 import com.android.vengateshm.contactui.model.ContactItem
 import com.android.vengateshm.contactui.model.ContactsListUiModel
 
-class ModelConverter {
+open class ModelConverter {
 
-    fun prepareUiModel(contactsListResponse: ContactsListResponse): ContactsListUiModel {
+    open fun prepareUiModel(contactsListResponse: ContactsListResponse): ContactsListUiModel {
         val contactItemList = mutableListOf<ContactItem>()
 
         val groupedList = contactsListResponse.contactsList.groupBy { it.toKey() }

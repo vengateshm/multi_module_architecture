@@ -5,7 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.android.vengateshm.contactui.R
+import com.android.vengateshm.contactui.adapters.ContactsListAdapter
+import com.android.vengateshm.contactui.viewmodel.ContactsListViewModel
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -22,6 +27,11 @@ class ContactsListFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
+    private lateinit var viewModel: ContactsListViewModel
+
+    private lateinit var contactsListAdapter: ContactsListAdapter
+    private lateinit var rvContactList: RecyclerView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -36,6 +46,22 @@ class ContactsListFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_contacts_list, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        contactsListAdapter = ContactsListAdapter()
+        rvContactList = view.findViewById(R.id.rvContactList)
+        rvContactList.layoutManager = LinearLayoutManager(context)
+        rvContactList.adapter = contactsListAdapter
+
+        viewModel = ViewModelProvider(requireActivity()).get(ContactsListViewModel::class.java)
+        viewModel.contactsList.observe(viewLifecycleOwner, {
+            contactsListAdapter.contactItemList = it
+            contactsListAdapter.notifyDataSetChanged()
+        })
+        viewModel.getContactsList()
     }
 
     companion object {

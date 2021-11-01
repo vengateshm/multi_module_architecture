@@ -23,26 +23,29 @@ class ContactsRepositoryImpl(private val modelConverter: ModelConverter) : Conta
     }
 
     private fun getContactsListResponse() = ContactsListResponse().apply {
-        val contactsList = mutableListOf<ContactItem>()
-        contactsList.add(
-            ContactItem(
-                name = "Andy Johnson",
-                phone = "+91 97152 15555",
-                email = "ajohnson@xyz.com",
-                displayName = "Marketing Manager",
-                isMarketingTeam = true,
-                isSalesTeam = false
-            )
-        )
-        contactsList.add(
-            ContactItem(
-                name = "Florina M",
-                phone = "+91 88152 15555",
-                email = "mflorina@xyz.com",
-                displayName = "Sales Head",
-                isMarketingTeam = false,
-                isSalesTeam = true
-            )
-        )
+        statusCode = "0000"
+        contactsList = mutableListOf<ContactItem>()
+            .apply {
+                add(
+                    ContactItem(
+                        name = "Andy Johnson",
+                        phone = "+91 97152 15555",
+                        email = "ajohnson@xyz.com",
+                        displayName = "Marketing Manager",
+                        isMarketingTeam = true,
+                        isSalesTeam = false
+                    )
+                )
+                add(
+                    ContactItem(
+                        name = "Florina M",
+                        phone = "+91 88152 15555",
+                        email = "mflorina@xyz.com",
+                        displayName = "Sales Head",
+                        isMarketingTeam = false,
+                        isSalesTeam = true
+                    )
+                )
+            }
     }
 }

@@ -1,0 +1,21 @@
+{
+  "statusCode": "0000",
+  "contactsList": [
+    {
+      "name": "Andy Johnson",
+      "phone": "+91 97152 15555",
+      "email": "ajohnson@xyz.com",
+      "displayName": "Andy Johnson",
+      "isMarketingTeam": true,
+      "isSalesTeam": false
+    },
+    {
+      "name": "Florina M",
+      "phone": "+91 88852 15555",
+      "email": "mflorina@xyz.com",
+      "displayName": "Florina M",
+      "isMarketingTeam": false,
+      "isSalesTeam": true
+    }
+  ]
+}
