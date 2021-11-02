@@ -12,6 +12,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -41,6 +43,8 @@ class ContactsListFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+
+    private var contactToSave = ""
 
     private lateinit var viewModel: ContactsListViewModel
 
@@ -144,18 +148,8 @@ class ContactsListFragment : Fragment() {
         }
 
         bsDialogBinding.tvAddToContacts.setOnClickListener {
+            contactToSave = contactItem.displayName
             dialog.dismiss()
-            val launcher =
-                registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-                    if (it.resultCode == Activity.RESULT_OK) {
-                        Snackbar.make(
-                            requireView(),
-                            String.format(getString(R.string.contact_added_snackbar_msg)),
-                            LENGTH_LONG
-                        )
-                            .show()
-                    }
-                }
             Intent(ContactsContract.Intents.Insert.ACTION)
                 .apply {
                     type = ContactsContract.RawContacts.CONTENT_TYPE
@@ -193,6 +187,23 @@ class ContactsListFragment : Fragment() {
 
         dialog.show()
     }
+
+    val activityResult =
+        ActivityResultCallback<ActivityResult> { result ->
+            if (result?.resultCode == Activity.RESULT_OK) {
+                Snackbar.make(
+                    requireView(),
+                    String.format(getString(R.string.contact_added_snackbar_msg), contactToSave),
+                    LENGTH_LONG
+                )
+                    .show()
+            }
+        }
+
+    private val launcher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult(),
+        activityResult
+    )
 
     companion object {
         /**

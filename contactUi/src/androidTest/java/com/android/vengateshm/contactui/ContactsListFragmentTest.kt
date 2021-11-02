@@ -2,6 +2,7 @@ package com.android.vengateshm.contactui
 
 import android.Manifest
 import android.os.Bundle
+import androidx.activity.result.ActivityResult
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
@@ -211,6 +212,20 @@ class ContactsListFragmentTest {
         onView(withText("New Message")).check(matches(isDisplayed()))
         onView(withText("New Message")).perform(click())
 
+        activityScenario.close()
+    }
+
+    @Test
+    fun testSnackBarDisplayed() {
+        val activityScenario = ActivityScenario.launch(ContactsListActivity::class.java)
+        activityScenario.onActivity {
+            val uiModel = StubData.getMultipleContacts()
+            (it.supportFragmentManager.findFragmentById(R.id.contactListFragmentContainer) as? ContactsListFragment)
+                ?.apply {
+                    populateContactsList(uiModel.contactItemList)
+                    activityResult.onActivityResult(ActivityResult(-1, null))
+                }
+        }
         activityScenario.close()
     }
 }
