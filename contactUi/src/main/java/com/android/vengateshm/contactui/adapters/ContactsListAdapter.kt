@@ -11,6 +11,8 @@ import com.android.vengateshm.contactui.model.ContactItem
 class ContactsListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var contactItemList: List<ContactItem> = mutableListOf()
+    var onPhoneNumberSelected : ((ContactItem) -> Unit)? = null
+    var onEmailSelected : ((ContactItem) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if (viewType == LIST_HEADER) {
@@ -20,7 +22,7 @@ class ContactsListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         } else {
             val itemBinding =
                 ContactListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-            ItemVH(itemBinding)
+            ItemVH(itemBinding,onPhoneNumberSelected,onEmailSelected)
         }
     }
 
@@ -48,7 +50,11 @@ class ContactsListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
     }
 
-    class ItemVH(private val itemBinding: ContactListItemBinding) :
+    class ItemVH(
+        private val itemBinding: ContactListItemBinding,
+        private val onPhoneNumberSelected: ((ContactItem) -> Unit)?,
+        private val onEmailSelected: ((ContactItem) -> Unit)?
+    ) :
         RecyclerView.ViewHolder(itemBinding.root) {
 
         fun bindItem(contactItem: ContactItem) {
@@ -56,6 +62,14 @@ class ContactsListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             itemBinding.tvDisplayName.text = contactItem.displayName
             itemBinding.tvPhoneNo.text = contactItem.phone
             itemBinding.tvEmailId.text = contactItem.email
+
+            itemBinding.tvPhoneNo.setOnClickListener {
+                onPhoneNumberSelected?.invoke(contactItem)
+            }
+
+            itemBinding.tvEmailId.setOnClickListener {
+                onEmailSelected?.invoke(contactItem)
+            }
         }
     }
 }

@@ -1,4 +1,8 @@
 <resources>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="call_btn">Call %s</string>
+    <string name="new_message">New Message</string>
+    <string name="contact_copied">Contact Copied</string>
+    <string name="contact_added_snackbar_msg">%s is added to your Contacts.</string>
 </resources>

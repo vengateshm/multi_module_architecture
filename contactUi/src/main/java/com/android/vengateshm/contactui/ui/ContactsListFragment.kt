@@ -1,17 +1,31 @@
 package com.android.vengateshm.contactui.ui
 
+import android.app.Activity
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.vengateshm.contactui.R
 import com.android.vengateshm.contactui.adapters.ContactsListAdapter
+import com.android.vengateshm.contactui.databinding.LayoutBottomSheetBinding
 import com.android.vengateshm.contactui.model.ContactItem
 import com.android.vengateshm.contactui.viewmodel.ContactsListViewModel
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_LONG
+import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_SHORT
+import com.google.android.material.snackbar.Snackbar
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -53,6 +67,7 @@ class ContactsListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         contactsListAdapter = ContactsListAdapter()
+        setAdapterClickListeners()
         rvContactList = view.findViewById(R.id.rvContactList)
         rvContactList.layoutManager = LinearLayoutManager(context)
         rvContactList.adapter = contactsListAdapter
@@ -63,11 +78,120 @@ class ContactsListFragment : Fragment() {
 
         })
         viewModel.getContactsList()
+
+        view.findViewById<LinearLayout>(R.id.layout_hotline_no)?.setOnClickListener {
+            showBottomSheetDialog(
+                true, ContactItem(
+                    name = "Customer Service Hotline",
+                    phone = "1800 667700",
+                    email = "",
+                    displayName = ""
+                )
+            )
+        }
+    }
+
+    private fun setAdapterClickListeners() {
+        contactsListAdapter.onPhoneNumberSelected = this::onPhoneNumberSelected
+        contactsListAdapter.onEmailSelected = this::onEmailSelected
     }
 
     fun populateContactsList(data: List<ContactItem>?) {
         contactsListAdapter.contactItemList = data!!
         contactsListAdapter.notifyDataSetChanged()
+    }
+
+    private fun onPhoneNumberSelected(contactItem: ContactItem) {
+        showBottomSheetDialog(true, contactItem)
+    }
+
+    private fun onEmailSelected(contactItem: ContactItem) {
+        showBottomSheetDialog(false, contactItem)
+    }
+
+    private fun showBottomSheetDialog(isPhoneNumberSelected: Boolean, contactItem: ContactItem) {
+        val dialog = BottomSheetDialog(requireContext())
+        val bsDialogBinding = LayoutBottomSheetBinding.inflate(layoutInflater)
+        dialog.setContentView(bsDialogBinding.root)
+
+        bsDialogBinding.tvCallOrSendMail.text =
+            if (isPhoneNumberSelected) String.format(
+                getString(R.string.call_btn),
+                contactItem.phone
+            ) else getString(R.string.new_message)
+
+        bsDialogBinding.tvCallOrSendMail.setOnClickListener {
+            dialog.dismiss()
+            if (isPhoneNumberSelected) {
+                Intent(Intent.ACTION_CALL)
+                    .apply {
+                        data = Uri.parse("tel:" + contactItem.phone)
+                    }
+                    .also {
+                        startActivity(it)
+                    }
+            } else {
+                Intent(Intent.ACTION_SENDTO)
+                    .apply {
+                        data = Uri.parse("mailto:")
+                        putExtra(Intent.EXTRA_EMAIL, arrayOf(contactItem.email))
+                    }.also { intent ->
+                        intent.resolveActivity(requireActivity().packageManager)?.let {
+                            startActivity(intent)
+                        }
+                    }
+            }
+        }
+
+        bsDialogBinding.tvAddToContacts.setOnClickListener {
+            dialog.dismiss()
+            val launcher =
+                registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                    if (it.resultCode == Activity.RESULT_OK) {
+                        Snackbar.make(
+                            requireView(),
+                            String.format(getString(R.string.contact_added_snackbar_msg)),
+                            LENGTH_LONG
+                        )
+                            .show()
+                    }
+                }
+            Intent(ContactsContract.Intents.Insert.ACTION)
+                .apply {
+                    type = ContactsContract.RawContacts.CONTENT_TYPE
+                    // Sets the special extended data for navigation
+                    putExtra("finishActivityOnSaveCompleted", true)
+                    putExtra(ContactsContract.Intents.Insert.NAME, contactItem.displayName)
+                    putExtra(ContactsContract.Intents.Insert.PHONE, contactItem.phone)
+                    putExtra(
+                        ContactsContract.Intents.Insert.PHONE_TYPE,
+                        ContactsContract.CommonDataKinds.Phone.TYPE_WORK
+                    )
+                    putExtra(ContactsContract.Intents.Insert.EMAIL, contactItem.email)
+                    putExtra(
+                        ContactsContract.Intents.Insert.EMAIL_TYPE,
+                        ContactsContract.CommonDataKinds.Email.TYPE_WORK
+                    )
+                    putExtra(ContactsContract.Intents.Insert.COMPANY, "XYZ Inc.")
+                }
+                .also {
+                    launcher.launch(it)
+                }
+        }
+
+        bsDialogBinding.tvCopy.setOnClickListener {
+            dialog.dismiss()
+            val clipboardManager =
+                requireActivity().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clip = ClipData.newPlainText(
+                "label",
+                if (isPhoneNumberSelected) contactItem.phone else contactItem.email
+            )
+            clipboardManager.setPrimaryClip(clip)
+            Snackbar.make(requireView(), getString(R.string.contact_copied), LENGTH_SHORT).show()
+        }
+
+        dialog.show()
     }
 
     companion object {
