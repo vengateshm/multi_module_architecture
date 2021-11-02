@@ -68,7 +68,7 @@ class ContactsListFragmentTest {
                     populateContactsList(uiModel.contactItemList)
                 }
         }
-        Espresso.onView(withId(R.id.tvName)).check(matches(isDisplayed()))
+        Espresso.onView(withId(R.id.tvHotlineContactLabel)).check(matches(isDisplayed()))
         onView(withText("1800 667700")).check(matches(isDisplayed()))
 
         Intents.release()
