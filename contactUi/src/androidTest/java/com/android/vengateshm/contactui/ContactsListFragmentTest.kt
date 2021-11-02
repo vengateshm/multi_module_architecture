@@ -5,8 +5,8 @@ import android.os.Bundle
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.swipeUp
-import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.matcher.ViewMatchers.*
@@ -117,5 +117,100 @@ class ContactsListFragmentTest {
         /*launchFragmentInContainer<ContactsListFragment>()
         Espresso.onView(withId(R.id.tvName)).check(ViewAssertions.matches(isDisplayed()))
         Espresso.onView(withText("1800 667700")).check(ViewAssertions.matches(isDisplayed()))*/
+    }
+
+    @Test
+    fun testCustomerServiceHotlineSelection() {
+        val activityScenario = ActivityScenario.launch(ContactsListActivity::class.java)
+        activityScenario.onActivity {
+            val uiModel = StubData.getMultipleContacts()
+            (it.supportFragmentManager.findFragmentById(R.id.contactListFragmentContainer) as? ContactsListFragment)
+                ?.apply {
+                    populateContactsList(uiModel.contactItemList)
+                }
+        }
+        // Hotline layout
+        onView(withId(R.id.nestedScrollView)).perform(swipeUp())
+        onView(withId(R.id.tvHotlineContactLabel)).perform(click())
+
+        onView(withText("Call 1800 667700")).check(matches(isDisplayed()))
+        onView(withText("Add to Contacts")).check(matches(isDisplayed()))
+        onView(withText("Copy")).check(matches(isDisplayed()))
+
+        activityScenario.close()
+    }
+
+    @Test
+    fun testCustomerServiceHotlineCall() {
+        val activityScenario = ActivityScenario.launch(ContactsListActivity::class.java)
+        activityScenario.onActivity {
+            val uiModel = StubData.getMultipleContacts()
+            (it.supportFragmentManager.findFragmentById(R.id.contactListFragmentContainer) as? ContactsListFragment)
+                ?.apply {
+                    populateContactsList(uiModel.contactItemList)
+                }
+        }
+        // Hotline layout
+        onView(withId(R.id.nestedScrollView)).perform(swipeUp())
+        onView(withId(R.id.tvHotlineContactLabel)).perform(click())
+        onView(withText("Call 1800 667700")).check(matches(isDisplayed()))
+        onView(withText("Call 1800 667700")).perform(click())
+
+        activityScenario.close()
+    }
+
+    @Test
+    fun testCustomerServiceHotlineAddToContacts() {
+        val activityScenario = ActivityScenario.launch(ContactsListActivity::class.java)
+        activityScenario.onActivity {
+            val uiModel = StubData.getMultipleContacts()
+            (it.supportFragmentManager.findFragmentById(R.id.contactListFragmentContainer) as? ContactsListFragment)
+                ?.apply {
+                    populateContactsList(uiModel.contactItemList)
+                }
+        }
+        // Hotline layout
+        onView(withId(R.id.nestedScrollView)).perform(swipeUp())
+        onView(withId(R.id.tvHotlineContactLabel)).perform(click())
+        onView(withText("Add to Contacts")).check(matches(isDisplayed()))
+        onView(withText("Add to Contacts")).perform(click())
+
+        activityScenario.close()
+    }
+
+    @Test
+    fun testCustomerServiceHotlineCopy() {
+        val activityScenario = ActivityScenario.launch(ContactsListActivity::class.java)
+        activityScenario.onActivity {
+            val uiModel = StubData.getMultipleContacts()
+            (it.supportFragmentManager.findFragmentById(R.id.contactListFragmentContainer) as? ContactsListFragment)
+                ?.apply {
+                    populateContactsList(uiModel.contactItemList)
+                }
+        }
+        // Hotline layout
+        onView(withId(R.id.nestedScrollView)).perform(swipeUp())
+        onView(withId(R.id.tvHotlineContactLabel)).perform(click())
+        onView(withText("Copy")).check(matches(isDisplayed()))
+        onView(withText("Copy")).perform(click())
+
+        activityScenario.close()
+    }
+
+    @Test
+    fun testContactItemNewMessage() {
+        val activityScenario = ActivityScenario.launch(ContactsListActivity::class.java)
+        activityScenario.onActivity {
+            val uiModel = StubData.getMultipleContacts()
+            (it.supportFragmentManager.findFragmentById(R.id.contactListFragmentContainer) as? ContactsListFragment)
+                ?.apply {
+                    populateContactsList(uiModel.contactItemList)
+                }
+        }
+        onView(withText("ajohnson@xyz.com")).perform(click())
+        onView(withText("New Message")).check(matches(isDisplayed()))
+        onView(withText("New Message")).perform(click())
+
+        activityScenario.close()
     }
 }
