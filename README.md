@@ -7,4 +7,6 @@ This sample project uses multi module architecture for different layers of clean
 
 **ui** - Displays the data in the ui.
 
-Every feature will have their own domain and ui modules.
+**core** - This module contains code that is common across modules and also helper classes.
+
+Every feature will have their own domain and ui modules. Unit tests are written for domain, ui and core modules in their respective module tests folder.
